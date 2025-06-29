@@ -21,3 +21,15 @@ body {
   min-width: 320px;
   min-height: 100vh;
 }
+
+button {
+  cursor: pointer;
+}
+
+:root {
+  --chart-line: #f3f4f6;
+}
+
+.dark {
+  --chart-line: #171717;
+}
