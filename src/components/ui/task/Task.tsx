@@ -18,7 +18,7 @@ export function Task({ task }: Props) {
         </div>
 
         <span>{task.title}</span>
-        <div className="flex items-center -space-x-1">
+        <div className="flex items-center  -space-x-1">
           {task.users.map((user) => (
             <div key={user.id}>
               <Image
@@ -26,6 +26,7 @@ export function Task({ task }: Props) {
                 alt={user.name}
                 width={24}
                 height={24}
+                className="rounded-full border-white border-1 dark:border-none"
               />
             </div>
           ))}
@@ -41,27 +42,29 @@ export function Task({ task }: Props) {
       <div>
         <span>{progress}%</span>
       </div>
-      <div>
-        <span>
-          <MessageSquareMore />
-          {task.comments.length}
-        </span>
-        <span>
-          <Folder />
-          {task.resources.length}
-        </span>
-        <span>
-          <Link />
-          {task.links.length}
-        </span>
-      </div>
-      <div>
-        <button>
-          <Plus />
-        </button>
-        <button>
-          <Edit2 />
-        </button>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="flex items-center gap-1">
+            <MessageSquareMore />
+            {task.comments.length}
+          </span>
+          <span className="flex items-center gap-1">
+            <Folder />
+            {task.resources.length}
+          </span>
+          <span className="flex items-center gap-1">
+            <Link />
+            {task.links.length}
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <button>
+            <Plus />
+          </button>
+          <button>
+            <Edit2 />
+          </button>
+        </div>
       </div>
     </div>
   );
