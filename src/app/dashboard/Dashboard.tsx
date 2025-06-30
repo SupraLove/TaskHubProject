@@ -4,6 +4,7 @@ import { Heading } from "@/components/ui/Heading";
 import { SearchField } from "@/components/ui/search-field/SearchField";
 import { ProjectStats } from "./project-stats/ProjectStats";
 import { ProjectStatisticsChart } from "./project-chart/ProjectStatisticsChart";
+import { LastTasks } from "./last-tasks/LastTasks";
 
 export function Dashboard() {
   return (
@@ -17,6 +18,7 @@ export function Dashboard() {
           <ProjectStats />
           <ProjectStatisticsChart />
         </div>
+        <LastTasks />
       </div>
       <div className="p-5 h-screen flex items-center justify-center">CHATS</div>
     </div>
