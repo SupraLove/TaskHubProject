@@ -1,4 +1,4 @@
-import { ProgressBar } from './ProgressBar'
+import { ProgressBar } from '../ProgressBar'
 import { Edit2, Folder, Link, MessageSquareMore, Plus } from 'lucide-react'
 import Image from 'next/image'
 
