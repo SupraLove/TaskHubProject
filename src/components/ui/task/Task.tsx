@@ -1,8 +1,17 @@
 import { ProgressBar } from '../ProgressBar'
-import { Edit2, Folder, Link, MessageSquareMore, Plus } from 'lucide-react'
+import {
+	Edit2,
+	Folder,
+	Link as LucideLink,
+	MessageSquareMore,
+	Plus
+} from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 
 import type { ITask } from '@/types/last-tasks.types'
+
+import { Pages } from '@/config/pages'
 
 interface Props {
 	task: ITask
@@ -70,7 +79,7 @@ export function Task({ task }: Props) {
 						{task.resources.length}
 					</span>
 					<span className='flex items-center gap-1 text-sm'>
-						<Link
+						<LucideLink
 							className='opacity-40'
 							size={16}
 						/>
@@ -81,9 +90,12 @@ export function Task({ task }: Props) {
 					<button className='bg-primary hover:bg-primary/90 rounded-full p-2 text-white transition-colors'>
 						<Plus size={18} />
 					</button>
-					<button className='border-primary text-primary hover:bg-primary/10 rounded-full border bg-white p-2 transition-colors'>
+					<Link
+						href={Pages.TASK_EDIT(task.id)}
+						className='border-primary text-primary hover:bg-primary/10 rounded-full border bg-white p-2 transition-colors'
+					>
 						<Edit2 size={18} />
-					</button>
+					</Link>
 				</div>
 			</div>
 		</div>
