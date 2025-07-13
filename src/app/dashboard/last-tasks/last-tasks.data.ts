@@ -7,7 +7,7 @@ export const TASKS: ITask[] = [
 	{
 		id: '1',
 		title: 'Travel App User Flow',
-		icon: Plane,
+		icon: 'Plane',
 		dueDate: new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000),
 		comments: ['this is comment', 'another comment', 'next comment'],
 		resources: ['', '', '', '', '', ''],
@@ -39,7 +39,7 @@ export const TASKS: ITask[] = [
 	{
 		id: '2',
 		title: 'E-commerce site redesign',
-		icon: ShoppingBasket,
+		icon: 'ShoppingBasket',
 		dueDate: new Date(new Date().getTime() + 1 * 24 * 60 * 60 * 1000),
 		comments: ['this is comment', 'another comment', 'next comment'],
 		resources: ['', '', '', '', '', ''],
@@ -56,7 +56,7 @@ export const TASKS: ITask[] = [
 	{
 		id: '3',
 		title: 'Mobile app feature update',
-		icon: TabletSmartphone,
+		icon: 'TabletSmartphone',
 		dueDate: new Date(new Date().getTime() + 3 * 24 * 60 * 60 * 1000),
 		comments: ['this is comment', 'another comment', 'next comment'],
 		resources: ['', '', '', ''],
