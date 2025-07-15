@@ -1,5 +1,4 @@
 import { USERS } from '../users.data'
-import { Plane, ShoppingBasket, TabletSmartphone } from 'lucide-react'
 
 import type { ITask } from '@/types/last-tasks.types'
 

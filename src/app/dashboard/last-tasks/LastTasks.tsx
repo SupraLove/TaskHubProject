@@ -1,48 +1,12 @@
 import { LastTasksFilter } from './LastTasksFilter'
 import { LastTasksSort } from './LastTasksSort'
-import { TASKS } from './last-tasks.data'
-import { useMemo, useState } from 'react'
+import { taskStore } from '@/stores/task.store'
+import { observer } from 'mobx-react-lite'
 
 import { Task } from '@/components/ui/task/Task'
 
-import type { TTaskSortBy, TTaskStatus } from '@/types/last-tasks.types'
-
-export function LastTasks() {
-	const [status, setStatus] = useState<TTaskStatus | null>(null)
-	const [sortByDueDate, setSortByDueDate] = useState<TTaskSortBy>('asc')
-
-	const filteredTasks = useMemo(() => {
-		const filtered = !status
-			? TASKS
-			: TASKS.filter(task => {
-					switch (status) {
-						case 'not-started':
-							return task.subTasks.every(subTask => !subTask.isCompleted)
-						case 'in-progress':
-							return (
-								task.subTasks.some(subTask => !subTask.isCompleted) &&
-								task.subTasks.some(subTask => subTask.isCompleted)
-							)
-						case 'completed':
-							return task.subTasks.every(subTask => subTask.isCompleted)
-						default:
-							return true
-					}
-				})
-		const sortedTasks = filtered.sort((a, b) => {
-			const dateA = new Date(a.dueDate).getTime()
-			const dateB = new Date(b.dueDate).getTime()
-
-			if (sortByDueDate === 'asc') {
-				return dateA - dateB
-			} else {
-				return dateB - dateA
-			}
-		})
-
-		return sortedTasks
-	}, [status, sortByDueDate])
-
+export const LastTasks = observer(() => {
+	const filteredTasks = taskStore.filteredTasks
 	return (
 		<div className='mt-7'>
 			<div className='mb-4 flex items-center justify-between'>
@@ -53,14 +17,8 @@ export function LastTasks() {
 					</span>
 				</h2>
 				<div className='flex items-center gap-2'>
-					<LastTasksSort
-						sortByDueDate={sortByDueDate}
-						setSortByDueDate={setSortByDueDate}
-					/>
-					<LastTasksFilter
-						status={status}
-						setStatus={setStatus}
-					/>
+					<LastTasksSort />
+					<LastTasksFilter />
 				</div>
 			</div>
 			{filteredTasks.length ? (
@@ -81,4 +39,4 @@ export function LastTasks() {
 			)}
 		</div>
 	)
-}
+})

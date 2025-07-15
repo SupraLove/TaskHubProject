@@ -1,4 +1,5 @@
 import { ProgressBar } from '../ProgressBar'
+import { taskStore } from '@/stores/task.store'
 import {
 	Edit2,
 	Folder,
@@ -6,8 +7,13 @@ import {
 	MessageSquareMore,
 	Plus
 } from 'lucide-react'
+import { observer } from 'mobx-react-lite'
 import Image from 'next/image'
 import Link from 'next/link'
+
+import { SubTaskCreateModal } from '@/app/dashboard/last-tasks/create-sub-task/SubTaskCreateModal'
+
+import { ICON_MAP } from '@/utils/icon-map'
 
 import type { ITask } from '@/types/last-tasks.types'
 
@@ -17,16 +23,17 @@ interface Props {
 	task: ITask
 }
 
-export function Task({ task }: Props) {
+export const Task = observer(({ task }: Props) => {
 	const completedCount = task.subTasks.filter(t => t.isCompleted).length
 	const totalCount = task.subTasks.length
 	const progress = Math.round((completedCount / totalCount) * 100)
+	const Icon = ICON_MAP[task.icon]
 	return (
 		<div className='p-2.5'>
 			<div className='mb-1.5 flex items-start justify-between'>
 				<div className='flex items-start gap-2'>
 					<div className='bg-primary/10 text-primary flex items-center justify-center rounded-full p-1.5'>
-						<task.icon />
+						<Icon />
 					</div>
 					<div className='w-32'>
 						<span className='leading-snug font-medium wrap-normal opacity-90'>
@@ -87,9 +94,7 @@ export function Task({ task }: Props) {
 					</span>
 				</div>
 				<div className='flex items-center gap-2'>
-					<button className='bg-primary hover:bg-primary/90 rounded-full p-2 text-white transition-colors'>
-						<Plus size={18} />
-					</button>
+					<SubTaskCreateModal taskId={task.id} />
 					<Link
 						href={Pages.TASK_EDIT(task.id)}
 						className='border-primary text-primary hover:bg-primary/10 rounded-full border bg-white p-2 transition-colors'
@@ -100,4 +105,4 @@ export function Task({ task }: Props) {
 			</div>
 		</div>
 	)
-}
+})
