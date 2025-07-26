@@ -61,7 +61,11 @@ export const TasksTimeline = observer(() => {
 								width: `${widthPercent}%`
 							}}
 						>
-							<Task task={task} />
+							<Task
+								task={task}
+								isColor
+								isMinimal
+							/>
 						</div>
 					)
 				})}

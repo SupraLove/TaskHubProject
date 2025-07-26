@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
+import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -54,7 +55,7 @@ export const TaskEditModalClient = observer(({ id }: Props) => {
 		return () => document.removeEventListener('keydown', handleEscape)
 	}, [])
 
-	const form = useForm<TTaskFormData>({
+	const form = useForm<z.infer<typeof TaskSchema>>({
 		resolver: zodResolver(TaskSchema)
 	})
 
@@ -63,7 +64,7 @@ export const TaskEditModalClient = observer(({ id }: Props) => {
 		if (!task) return
 		form.reset({
 			title: task.title,
-			dueDate: new Date(task.dueDate),
+			dueDate: new Date(task.dueDate.date),
 			icon: task.icon
 		})
 	}, [id])
@@ -92,7 +93,7 @@ export const TaskEditModalClient = observer(({ id }: Props) => {
 					<div className='mt-4'>
 						<Form {...form}>
 							<form
-								onSubmit={form.handleSubmit(onSubmit)}
+								// onSubmit={form.handleSubmit(onSubmit)}
 								className='space-y-8'
 							>
 								<FormField
