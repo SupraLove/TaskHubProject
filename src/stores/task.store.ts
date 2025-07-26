@@ -1,9 +1,11 @@
+import { isToday } from 'date-fns'
 import { makeAutoObservable } from 'mobx'
 
 import { TASKS } from '@/app/dashboard/last-tasks/last-tasks.data'
 
 import type {
 	ITask,
+	ITaskWithTime,
 	TSubTaskFormData,
 	TTaskFormData,
 	TTaskSortBy,
@@ -17,6 +19,13 @@ class TaskStore {
 
 	constructor() {
 		makeAutoObservable(this)
+	}
+
+	get TodayTasks() {
+		return this.tasks.filter(task => {
+			const taskDate = new Date(task.dueDate.date)
+			return isToday(taskDate) && task.dueDate.startTime && task.dueDate.endTime
+		}) as ITaskWithTime[]
 	}
 
 	getTaskById(id: string): ITask | undefined {
@@ -75,8 +84,8 @@ class TaskStore {
 		}
 
 		return filtered.slice().sort((a, b) => {
-			const dateA = new Date(a.dueDate).getTime()
-			const dateB = new Date(b.dueDate).getTime()
+			const dateA = new Date(a.dueDate.date).getTime()
+			const dateB = new Date(b.dueDate.date).getTime()
 
 			if (this.sortByDueDate === 'asc') {
 				return dateA - dateB

@@ -8,7 +8,7 @@ import { Task } from '@/components/ui/task/Task'
 export const LastTasks = observer(() => {
 	const filteredTasks = taskStore.filteredTasks
 	return (
-		<div className='mt-7'>
+		<div className='mt-7 mb-5'>
 			<div className='mb-4 flex items-center justify-between'>
 				<h2 className='text-xl font-medium'>
 					Last Tasks{' '}
