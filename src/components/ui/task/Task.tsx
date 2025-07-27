@@ -89,7 +89,7 @@ export const Task = observer(({ task, isColor, isMinimal }: Props) => {
 								alt={user.name}
 								width={40}
 								height={40}
-								className='rounded-full border-1 border-white dark:border-none'
+								className='rounded-full'
 							/>
 						</div>
 					))}
@@ -129,7 +129,7 @@ export const Task = observer(({ task, isColor, isMinimal }: Props) => {
 						<SubTaskCreateModal taskId={task.id} />
 						<Link
 							href={DashboardPages.TASK_EDIT(task.id)}
-							className='border-primary text-primary hover:bg-primary/10 rounded-full border bg-white p-2 transition-colors'
+							className='border-primary text-primary hover:bg-primary/10 rounded-full border bg-white p-2 dark:border-white dark:bg-neutral-800 dark:text-white dark:hover:bg-white/10'
 						>
 							<Edit2 size={18} />
 						</Link>

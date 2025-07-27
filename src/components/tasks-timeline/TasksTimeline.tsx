@@ -8,9 +8,13 @@ const HOURS = Array.from({ length: 9 }, (_, i) => i + 9)
 
 export const TasksTimeline = observer(() => {
 	const todayTasks = taskStore.TodayTasks
-	const users = [...new Set(todayTasks.map(task => task.users).flat())]
+	const users = [
+		...new Map(
+			todayTasks.flatMap(task => task.users).map(user => [user.id, user])
+		).values()
+	]
 	return (
-		<div className='bg-card rounded-2xl p-3.5'>
+		<div className='bg-card rounded-2xl p-3.5 dark:bg-neutral-800'>
 			<div className='mb-4 flex items-center justify-between'>
 				<h2 className='text-xl font-medium'>Today Tasks</h2>
 				<div className='flex items-center -space-x-3'>

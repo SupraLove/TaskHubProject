@@ -26,7 +26,7 @@ export const LastTasks = observer(() => {
 					{filteredTasks.map(task => (
 						<div
 							key={task.id}
-							className='rounded-2xl bg-white'
+							className='rounded-2xl bg-white dark:bg-neutral-800'
 						>
 							<Task task={task} />
 						</div>
