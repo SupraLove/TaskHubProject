@@ -1,8 +1,11 @@
 'use client'
 
+import { authStore } from '@/stores/auth.store'
 import { AuthSchema } from '@/zod-schemes/auth.zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { observer } from 'mobx-react-lite'
 import { useRouter } from 'next/navigation'
+import { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import type z from 'zod'
@@ -18,13 +21,13 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 
-import { Pages } from '@/config/pages'
+import { DashboardPages } from '@/config/dashboard-pages'
 
 interface Props {
 	type: 'login' | 'register' | 'reset-password' | 'forgot-password'
 }
 
-export function AuthForm({ type }: Props) {
+export const AuthForm = observer(({ type }: Props) => {
 	const isLogin = type === 'login'
 	const router = useRouter()
 	const form = useForm<z.infer<typeof AuthSchema>>({
@@ -32,11 +35,14 @@ export function AuthForm({ type }: Props) {
 	})
 
 	const onSubmit = (data: z.infer<typeof AuthSchema>) => {
-		toast.success(
-			isLogin ? 'Logged in successfully' : 'Registered successfully'
-		)
+		authStore.login()
 		form.reset()
-		router.replace(Pages.DASHBOARD)
+		if (authStore.isLoggedIn) {
+			toast.success(
+				isLogin ? 'Logged in successfully' : 'Registered successfully'
+			)
+			router.replace(DashboardPages.DASHBOARD)
+		}
 	}
 	return (
 		<div className='bg-pattern flex h-full w-full items-center justify-center'>
@@ -100,4 +106,4 @@ export function AuthForm({ type }: Props) {
 			</div>
 		</div>
 	)
-}
+})

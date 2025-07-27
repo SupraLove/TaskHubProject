@@ -18,7 +18,7 @@ import { ICON_MAP } from '@/utils/icon-map'
 
 import type { ITask } from '@/types/last-tasks.types'
 
-import { Pages } from '@/config/pages'
+import { DashboardPages } from '@/config/dashboard-pages'
 
 interface Props {
 	task: ITask
@@ -128,7 +128,7 @@ export const Task = observer(({ task, isColor, isMinimal }: Props) => {
 					<div className='flex items-center gap-2'>
 						<SubTaskCreateModal taskId={task.id} />
 						<Link
-							href={Pages.TASK_EDIT(task.id)}
+							href={DashboardPages.TASK_EDIT(task.id)}
 							className='border-primary text-primary hover:bg-primary/10 rounded-full border bg-white p-2 transition-colors'
 						>
 							<Edit2 size={18} />
