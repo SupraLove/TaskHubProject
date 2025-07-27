@@ -1,11 +1,8 @@
 'use client'
 
-import { authStore } from '@/stores/auth.store'
+import { signInWithEmail } from './actions'
 import { AuthSchema } from '@/zod-schemes/auth.zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { observer } from 'mobx-react-lite'
-import { useRouter } from 'next/navigation'
-import { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import type z from 'zod'
@@ -21,39 +18,29 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 
-import { DashboardPages } from '@/config/dashboard-pages'
-
-interface Props {
-	type: 'login' | 'register' | 'reset-password' | 'forgot-password'
-}
-
-export const AuthForm = observer(({ type }: Props) => {
-	const isLogin = type === 'login'
-	const router = useRouter()
+export const AuthForm = () => {
 	const form = useForm<z.infer<typeof AuthSchema>>({
 		resolver: zodResolver(AuthSchema)
 	})
 
 	const onSubmit = (data: z.infer<typeof AuthSchema>) => {
-		authStore.login()
-		form.reset()
-		if (authStore.isLoggedIn) {
+		// authStore.login()
+		signInWithEmail({ email: data.email }).then(() => {
+			form.reset()
+
 			toast.success(
-				isLogin ? 'Logged in successfully' : 'Registered successfully'
+				'Link to sign in has been sent to your email. Please check your box'
 			)
-			router.replace(DashboardPages.DASHBOARD)
-		}
+		})
 	}
 	return (
-		<div className='bg-pattern flex h-full w-full items-center justify-center'>
+		<div className='bg-pattern flex min-h-screen w-full items-center justify-center'>
 			<div
 				className='max-w-sm rounded-lg bg-white p-6 dark:bg-gray-800'
 				onClick={e => e.stopPropagation()}
 			>
 				<div className='mb-6'>
-					<h2 className='text-xl font-bold'>
-						{isLogin ? 'Login' : 'Register'}
-					</h2>
+					<h2 className='text-xl font-bold'>Sign in link</h2>
 
 					<div className='mt-4'>
 						<Form {...form}>
@@ -80,25 +67,7 @@ export const AuthForm = observer(({ type }: Props) => {
 									)}
 								/>
 
-								<FormField
-									control={form.control}
-									name='password'
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Password</FormLabel>
-											<FormControl>
-												<Input
-													placeholder='Enter password: '
-													type='password'
-													{...field}
-												/>
-											</FormControl>
-
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<Button type='submit'>Save</Button>
+								<Button type='submit'>Send link</Button>
 							</form>
 						</Form>
 					</div>
@@ -106,4 +75,4 @@ export const AuthForm = observer(({ type }: Props) => {
 			</div>
 		</div>
 	)
-})
+}
