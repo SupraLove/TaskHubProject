@@ -25,13 +25,18 @@ export const AuthForm = () => {
 
 	const onSubmit = (data: z.infer<typeof AuthSchema>) => {
 		// authStore.login()
-		signInWithEmail({ email: data.email }).then(() => {
-			form.reset()
-
-			toast.success(
-				'Link to sign in has been sent to your email. Please check your box'
-			)
-		})
+		signInWithEmail({ email: data.email })
+			.then(() => {
+				toast.success(
+					'Link to sign in has been sent to your email. Please check your box'
+				)
+			})
+			.catch(error => {
+				toast.error(`Error: ${error.message || 'Something went wrong'}`)
+			})
+			.finally(() => {
+				form.reset()
+			})
 	}
 	return (
 		<div className='bg-pattern flex min-h-screen w-full items-center justify-center'>

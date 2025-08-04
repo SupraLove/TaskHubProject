@@ -1,11 +1,8 @@
-import { redirect } from 'next/navigation'
 import type { ReactNode } from 'react'
 
 import { Sidebar } from '@/components/layout/sidebar/Sidebar'
 
 import { getServerAuth } from '@/utils/supabase/get-server-auth'
-
-import { PublicPages } from '@/config/public-pages'
 
 interface Props {
 	children: ReactNode
@@ -13,15 +10,12 @@ interface Props {
 }
 
 export default async function DashboardLayout({ children, modals }: Props) {
-	const user = await getServerAuth()
+	await getServerAuth(true)
 
-	if (!user) {
-		redirect(PublicPages.LOGIN)
-	}
 	return (
 		<div className='grid min-h-screen grid-cols-[240px_1fr]'>
 			<Sidebar />
-			<main className='p-5'>{children}</main>
+			<main>{children}</main>
 			{modals}
 		</div>
 	)

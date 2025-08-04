@@ -1,17 +1,26 @@
 'use client'
 
+import { Chat } from './chat/Chat'
 import { LastTasks } from './last-tasks/LastTasks'
 import { ProjectStatisticsChart } from './project-chart/ProjectStatisticsChart'
 import { ProjectStats } from './project-stats/ProjectStats'
+import { taskStore } from '@/stores/task.store'
+import { useEffect } from 'react'
 
 import { TasksTimeline } from '@/components/tasks-timeline/TasksTimeline'
 import { Heading } from '@/components/ui/Heading'
 import { SearchField } from '@/components/ui/search-field/SearchField'
 
-export function Dashboard() {
+import type { TTask } from '@/types/last-tasks.types'
+
+export function Dashboard({ tasks }: { tasks: TTask[] }) {
+	useEffect(() => {
+		taskStore.loadStoreFromServer(tasks)
+	}, [])
+
 	return (
-		<div className='grid grid-cols-[2.7fr_1fr]'>
-			<div>
+		<div className='grid h-screen grid-cols-[3.7fr_1fr]'>
+			<div className='overflow-y-auto p-5'>
 				<div className='mb-5 flex items-center justify-between'>
 					<Heading>Dashboard</Heading>
 					<SearchField
@@ -26,9 +35,7 @@ export function Dashboard() {
 				<LastTasks />
 				<TasksTimeline />
 			</div>
-			<div className='flex min-h-screen items-center justify-center p-5'>
-				CHATS
-			</div>
+			<Chat />
 		</div>
 	)
 }

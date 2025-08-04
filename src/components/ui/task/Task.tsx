@@ -16,28 +16,28 @@ import { SubTaskCreateModal } from '@/app/dashboard/last-tasks/create-sub-task/S
 import { cn } from '@/utils/cn'
 import { ICON_MAP } from '@/utils/icon-map'
 
-import type { ITask } from '@/types/last-tasks.types'
+import type { TTask } from '@/types/last-tasks.types'
 
 import { DashboardPages } from '@/config/dashboard-pages'
 
 interface Props {
-	task: ITask
+	task: TTask
 	isColor?: boolean
 	isMinimal?: boolean
 }
 
 export const Task = observer(({ task, isColor, isMinimal }: Props) => {
-	const completedCount = task.subTasks.filter(t => t.isCompleted).length
-	const totalCount = task.subTasks.length
+	const completedCount = task?.sub_task?.filter(t => t.is_completed).length || 0
+	const totalCount = task?.sub_task?.length || 0
 	const progress = Math.round((completedCount / totalCount) * 100)
-	const Icon = ICON_MAP[task.icon]
+	const Icon = ICON_MAP[task.icon as keyof typeof ICON_MAP]
 
 	const dueDate = useMemo(() => {
-		return isToday(task.dueDate.date)
+		return isToday(task.due_date)
 			? 'Today'
-			: Math.ceil((+task.dueDate.date - Date.now()) / (1000 * 60 * 60 * 24)) +
+			: Math.ceil((+task.due_date - Date.now()) / (1000 * 60 * 60 * 24)) +
 					' days'
-	}, [task.dueDate.date])
+	}, [task.due_date])
 	return (
 		<div
 			className={cn(
@@ -71,8 +71,8 @@ export const Task = observer(({ task, isColor, isMinimal }: Props) => {
 							>
 								{isMinimal ? (
 									<>
-										{format(task.dueDate.startTime!, 'ha')} -{' '}
-										{format(task.dueDate.endTime!, 'ha')}
+										{format(task.start_time!, 'ha')} -{' '}
+										{format(task.end_time!, 'ha')}
 									</>
 								) : (
 									<>Due: {dueDate}</>
@@ -82,7 +82,7 @@ export const Task = observer(({ task, isColor, isMinimal }: Props) => {
 					</div>
 				</div>
 				<div className='flex items-center -space-x-3'>
-					{task.users.map(user => (
+					{/* {task.users.map(user => (
 						<div key={user.id}>
 							<Image
 								src={user.avatarPath}
@@ -92,7 +92,7 @@ export const Task = observer(({ task, isColor, isMinimal }: Props) => {
 								className='rounded-full'
 							/>
 						</div>
-					))}
+					))} */}
 				</div>
 			</div>
 			{!isMinimal && (
@@ -108,21 +108,21 @@ export const Task = observer(({ task, isColor, isMinimal }: Props) => {
 								className={isColor ? 'opacity-80' : 'opacity-50'}
 								size={16}
 							/>
-							{task.comments.length}
+							{/* {task.comments.length} */} 3
 						</span>
 						<span className='flex items-center gap-1 text-sm'>
 							<Folder
 								className={isColor ? 'opacity-80' : 'opacity-50'}
 								size={16}
 							/>
-							{task.resources.length}
+							{/* {task.resources.length} */} 6
 						</span>
 						<span className='flex items-center gap-1 text-sm'>
 							<LucideLink
 								className={isColor ? 'opacity-80' : 'opacity-50'}
 								size={16}
 							/>
-							{task.links.length}
+							{/* {task.links.length} */}2
 						</span>
 					</div>
 					<div className='flex items-center gap-2'>

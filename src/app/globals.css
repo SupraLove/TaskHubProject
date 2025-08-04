@@ -164,3 +164,9 @@ button {
 	--color-primary: #806df2;
 	--color-secondary: #4f46e5;
 }
+
+@media (max-height: 800px) {
+	.chat-header-image {
+		@apply hidden;
+	}
+}

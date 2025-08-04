@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 export default async function Page() {
 	const user = await getServerAuth()
 
-	if (!user) {
+	if (user) {
 		redirect(DashboardPages.BASE)
 	}
 

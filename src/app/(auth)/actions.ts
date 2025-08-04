@@ -8,18 +8,10 @@ import { createClientFromServer } from '@/utils/supabase/server'
 export async function signInWithEmail({ email }: { email: string }) {
 	const supabase = await createClientFromServer()
 
-	const { error } = await supabase.auth.signInWithOtp({
+	return supabase.auth.signInWithOtp({
 		email,
 		options: {
-			shouldCreateUser: true,
-			emailRedirectTo: 'http://localhost:3000'
+			shouldCreateUser: true
 		}
 	})
-
-	if (error) {
-		redirect('/error')
-	}
-
-	revalidatePath('/', 'layout')
-	redirect('/')
 }
