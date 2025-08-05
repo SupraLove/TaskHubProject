@@ -1,4 +1,7 @@
+import { createClientSubTask } from '@/services/tasks/task-client.service'
 import { taskStore } from '@/stores/task.store'
+import { useMutation } from '@tanstack/react-query'
+import { add } from 'date-fns'
 import { Plus } from 'lucide-react'
 import { observer } from 'mobx-react-lite'
 import { useState } from 'react'
@@ -19,9 +22,25 @@ interface Props {
 	taskId: string
 }
 
-export const SubTaskCreateModal = observer(({ taskId }: Props) => {
+export const SubTaskCreateModal = ({ taskId }: Props) => {
 	const [title, setTitle] = useState('')
 	const [isOpenModal, setIsOpenModal] = useState(false)
+
+	const { mutate, isPending } = useMutation({
+		mutationKey: ['addSubTask', taskId],
+		mutationFn: () => createClientSubTask(taskId, { title }),
+		onSuccess() {
+			toast.success('Subtask added successfully')
+			setTitle('')
+			setIsOpenModal(false)
+		},
+		onError(error) {
+			toast.error(`Error adding subtask: ${error.message}`, {
+				id: 'subtask--error',
+				description: error as unknown as string
+			})
+		}
+	})
 
 	const handleAdd = () => {
 		if (!title.trim()) {
@@ -31,10 +50,7 @@ export const SubTaskCreateModal = observer(({ taskId }: Props) => {
 			return
 		}
 
-		taskStore.addSubTask(taskId, { title })
-		toast.success('Subtask added successfully')
-		setTitle('')
-		setIsOpenModal(false)
+		mutate()
 	}
 
 	return (
@@ -55,10 +71,15 @@ export const SubTaskCreateModal = observer(({ taskId }: Props) => {
 							onChange={e => setTitle(e.target.value)}
 							className='mb-4'
 						/>
-						<Button onClick={handleAdd}>Add Subtask</Button>
+						<Button
+							onClick={handleAdd}
+							disabled={isPending}
+						>
+							{isPending ? 'Adding...' : 'Add Subtask'}
+						</Button>
 					</DialogDescription>
 				</DialogHeader>
 			</DialogContent>
 		</Dialog>
 	)
-})
+}

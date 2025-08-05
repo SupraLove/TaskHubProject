@@ -1,5 +1,6 @@
 'use client'
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ThemeProvider } from 'next-themes'
 import dynamic from 'next/dynamic'
 import type { PropsWithChildren } from 'react'
@@ -12,16 +13,20 @@ const DynamicThemeToggle = dynamic(
 	}
 )
 
+const queryClient = new QueryClient()
+
 export function Providers({ children }: PropsWithChildren<unknown>) {
 	return (
-		<ThemeProvider
-			attribute='class'
-			defaultTheme='system'
-			enableSystem
-		>
-			{children}
-			<Toaster />
-			<DynamicThemeToggle />
-		</ThemeProvider>
+		<QueryClientProvider client={queryClient}>
+			<ThemeProvider
+				attribute='class'
+				defaultTheme='system'
+				enableSystem
+			>
+				{children}
+				<Toaster />
+				<DynamicThemeToggle />
+			</ThemeProvider>
+		</QueryClientProvider>
 	)
 }

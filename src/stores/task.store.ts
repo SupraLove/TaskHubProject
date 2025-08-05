@@ -1,9 +1,8 @@
 import { isToday } from 'date-fns'
 import { makeAutoObservable } from 'mobx'
 
-import { TASKS } from '@/app/dashboard/last-tasks/last-tasks.data'
-
 import type {
+	TGetTasksResponse,
 	TSubTaskFormData,
 	TTask,
 	TTaskFormData,
@@ -12,7 +11,7 @@ import type {
 } from '@/types/last-tasks.types'
 
 class TaskStore {
-	tasks: TTask[] = TASKS
+	tasks: TGetTasksResponse = []
 	status: TTaskStatus | null = null
 	sortByDueDate: TTaskSortBy = 'asc'
 
@@ -20,7 +19,7 @@ class TaskStore {
 		makeAutoObservable(this)
 	}
 
-	loadStoreFromServer(tasks: TTask[]): void {
+	loadStoreFromServer(tasks: TGetTasksResponse): void {
 		this.tasks = tasks
 	}
 
@@ -28,10 +27,10 @@ class TaskStore {
 		return this.tasks.filter(task => {
 			const taskDate = new Date(task.due_date)
 			return isToday(taskDate) && task.start_time && task.end_time
-		}) as TTask[]
+		}) as TGetTasksResponse
 	}
 
-	getTaskById(id: string): TTask | undefined {
+	getTaskById(id: string): TGetTasksResponse[0] | undefined {
 		return this.tasks.find(task => task.id === id)
 	}
 

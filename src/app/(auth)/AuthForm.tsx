@@ -28,11 +28,16 @@ export const AuthForm = () => {
 		signInWithEmail({ email: data.email })
 			.then(() => {
 				toast.success(
-					'Link to sign in has been sent to your email. Please check your box'
+					'Link to sign in has been sent to your email. Please check your box',
+					{
+						id: 'auth--success'
+					}
 				)
 			})
 			.catch(error => {
-				toast.error(`Error: ${error.message || 'Something went wrong'}`)
+				toast.error(`Error: ${error.message || 'Something went wrong'}`, {
+					id: 'auth--error'
+				})
 			})
 			.finally(() => {
 				form.reset()

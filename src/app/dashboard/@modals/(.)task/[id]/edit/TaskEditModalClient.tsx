@@ -1,14 +1,19 @@
 'use client'
 
+import {
+	taskClientGetById,
+	taskClientUpdate
+} from '@/services/tasks/task-client.service'
 import { taskStore } from '@/stores/task.store'
 import { TaskSchema } from '@/zod-schemes/task.zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { format } from 'date-fns'
 import { CalendarIcon } from 'lucide-react'
 import { observer } from 'mobx-react-lite'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, type SubmitHandler, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
@@ -31,6 +36,7 @@ import {
 
 import { ICON_MAP, ICON_NAMES } from '@/utils/icon-map'
 
+import type { Database } from '@/types/database.types'
 import type { TTaskFormData } from '@/types/last-tasks.types'
 
 interface Props {
@@ -59,20 +65,43 @@ export const TaskEditModalClient = observer(({ id }: Props) => {
 		resolver: zodResolver(TaskSchema)
 	})
 
-	useEffect(() => {
-		const task = taskStore.getTaskById(id)
-		if (!task) return
-		form.reset({
-			title: task.title,
-			dueDate: new Date(task.dueDate.date),
-			icon: task.icon
-		})
-	}, [id])
+	const { isSuccess, data } = useQuery({
+		queryKey: ['task', id],
+		queryFn: () => taskClientGetById(id),
+		enabled: !!id
+	})
 
-	const onSubmit = (data: TTaskFormData) => {
-		taskStore.updateTask(id, data)
-		toast.success('Task updated successfully')
-		closeModal()
+	useEffect(() => {
+		if (!isSuccess || !data) {
+			toast.error('Task not found')
+			return
+		}
+		form.reset({
+			title: data.title,
+			due_date: new Date(data.due_date),
+			icon: data.icon as keyof typeof ICON_MAP
+		})
+	}, [isSuccess])
+
+	const { mutate, isPending } = useMutation({
+		mutationKey: ['task', 'update', id],
+		mutationFn: (data: Database['public']['Tables']['task']['Update']) =>
+			taskClientUpdate(id, data),
+		onSuccess: () => {
+			toast.success('Task updated successfully')
+			closeModal()
+		},
+		onError: error => {
+			toast.error(error.message || 'Failed to update task')
+		}
+	})
+
+	const onSubmit: SubmitHandler<z.infer<typeof TaskSchema>> = data => {
+		mutate({
+			title: data.title,
+			due_date: data.due_date.toISOString(),
+			icon: data.icon
+		})
 	}
 
 	return (
@@ -93,7 +122,7 @@ export const TaskEditModalClient = observer(({ id }: Props) => {
 					<div className='mt-4'>
 						<Form {...form}>
 							<form
-								// onSubmit={form.handleSubmit(onSubmit)}
+								onSubmit={form.handleSubmit(onSubmit)}
 								className='space-y-8'
 							>
 								<FormField
@@ -115,7 +144,7 @@ export const TaskEditModalClient = observer(({ id }: Props) => {
 								/>
 								<Controller
 									control={form.control}
-									name='dueDate'
+									name='due_date'
 									render={({ field: { onChange, value } }) => (
 										<FormItem>
 											<FormLabel>DueDate</FormLabel>
@@ -178,7 +207,12 @@ export const TaskEditModalClient = observer(({ id }: Props) => {
 									)}
 								/>
 
-								<Button type='submit'>Save</Button>
+								<Button
+									type='submit'
+									disabled={isPending}
+								>
+									{isPending ? 'Updating...' : 'Save'}
+								</Button>
 							</form>
 						</Form>
 					</div>

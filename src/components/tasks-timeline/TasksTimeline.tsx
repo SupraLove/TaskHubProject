@@ -1,16 +1,24 @@
 import { Task } from '../ui/task/Task'
-import { taskStore } from '@/stores/task.store'
 import { getHours, getMinutes } from 'date-fns'
-import { observer } from 'mobx-react-lite'
 import Image from 'next/image'
+
+import { parseTime } from '@/utils/parse-time'
+
+import type { TTask } from '@/types/last-tasks.types'
 
 const HOURS = Array.from({ length: 9 }, (_, i) => i + 9)
 
-export const TasksTimeline = observer(() => {
-	const todayTasks = taskStore.TodayTasks
+interface Props {
+	tasks: TTask[]
+}
+
+export const TasksTimeline = ({ tasks }: Props) => {
 	const users = [
 		...new Map(
-			todayTasks.flatMap(task => task.users).map(user => [user.id, user])
+			tasks
+				.flatMap(task => task.task_participants)
+				.filter(u => Boolean(u.profile))
+				.map(user => [user.profile.id, user.profile])
 		).values()
 	]
 	return (
@@ -21,8 +29,8 @@ export const TasksTimeline = observer(() => {
 					{users.map(user => (
 						<div key={user.id}>
 							<Image
-								src={user.avatarPath}
-								alt={user.name}
+								src={user.avatar_path || ''}
+								alt={user.name || ''}
 								width={42}
 								height={42}
 								className='rounded-full border-1 border-white dark:border-none'
@@ -43,12 +51,17 @@ export const TasksTimeline = observer(() => {
 				</div>
 			</div>
 			<div className='relative h-72'>
-				{todayTasks.map(task => {
-					const start = getHours(task.dueDate.startTime)
-					const end = getHours(task.dueDate.endTime)
+				{tasks.map(task => {
+					if (!task.start_time || !task.end_time) return null
 
-					const startMinutes = getMinutes(task.dueDate.startTime)
-					const endMinutes = getMinutes(task.dueDate.endTime)
+					const correctStartTime = parseTime(task.due_date, task.start_time)
+					const correctEndTime = parseTime(task.due_date, task.end_time)
+
+					const start = getHours(correctStartTime)
+					const end = getHours(correctEndTime)
+
+					const startMinutes = getMinutes(correctStartTime)
+					const endMinutes = getMinutes(correctEndTime)
 
 					const startPercent =
 						(((start - 9) * 60 + startMinutes) / ((17 - 9) * 60)) * 100
@@ -76,4 +89,4 @@ export const TasksTimeline = observer(() => {
 			</div>
 		</div>
 	)
-})
+}

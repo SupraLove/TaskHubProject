@@ -11,9 +11,18 @@ import { TasksTimeline } from '@/components/tasks-timeline/TasksTimeline'
 import { Heading } from '@/components/ui/Heading'
 import { SearchField } from '@/components/ui/search-field/SearchField'
 
-import type { TTask } from '@/types/last-tasks.types'
+import type {
+	TGetTasksResponse,
+	TGetTodayTasksResponse,
+	TTask
+} from '@/types/last-tasks.types'
 
-export function Dashboard({ tasks }: { tasks: TTask[] }) {
+interface Props {
+	tasks: TGetTasksResponse
+	todayTasks: TGetTodayTasksResponse
+}
+
+export function Dashboard({ tasks, todayTasks }: Props) {
 	useEffect(() => {
 		taskStore.loadStoreFromServer(tasks)
 	}, [])
@@ -33,7 +42,7 @@ export function Dashboard({ tasks }: { tasks: TTask[] }) {
 					<ProjectStatisticsChart />
 				</div>
 				<LastTasks />
-				<TasksTimeline />
+				<TasksTimeline tasks={todayTasks} />
 			</div>
 			<Chat />
 		</div>

@@ -6,7 +6,6 @@ import {
 	Link as LucideLink,
 	MessageSquareMore
 } from 'lucide-react'
-import { observer } from 'mobx-react-lite'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useMemo } from 'react'
@@ -15,6 +14,7 @@ import { SubTaskCreateModal } from '@/app/dashboard/last-tasks/create-sub-task/S
 
 import { cn } from '@/utils/cn'
 import { ICON_MAP } from '@/utils/icon-map'
+import { parseTime } from '@/utils/parse-time'
 
 import type { TTask } from '@/types/last-tasks.types'
 
@@ -26,18 +26,19 @@ interface Props {
 	isMinimal?: boolean
 }
 
-export const Task = observer(({ task, isColor, isMinimal }: Props) => {
+export const Task = ({ task, isColor, isMinimal }: Props) => {
 	const completedCount = task?.sub_task?.filter(t => t.is_completed).length || 0
 	const totalCount = task?.sub_task?.length || 0
 	const progress = Math.round((completedCount / totalCount) * 100)
 	const Icon = ICON_MAP[task.icon as keyof typeof ICON_MAP]
 
+	const correctDate = new Date(task.due_date)
+
 	const dueDate = useMemo(() => {
-		return isToday(task.due_date)
+		return isToday(correctDate)
 			? 'Today'
-			: Math.ceil((+task.due_date - Date.now()) / (1000 * 60 * 60 * 24)) +
-					' days'
-	}, [task.due_date])
+			: Math.ceil((+correctDate - Date.now()) / (1000 * 60 * 60 * 24)) + ' days'
+	}, [correctDate])
 	return (
 		<div
 			className={cn(
@@ -69,10 +70,10 @@ export const Task = observer(({ task, isColor, isMinimal }: Props) => {
 							<span
 								className={cn('text-sm opacity-50', isColor && 'opacity-70')}
 							>
-								{isMinimal ? (
+								{isMinimal && task.start_time && task.end_time ? (
 									<>
-										{format(task.start_time!, 'ha')} -{' '}
-										{format(task.end_time!, 'ha')}
+										{format(parseTime(task.due_date, task.start_time), 'ha')} -{' '}
+										{format(parseTime(task.due_date, task.end_time), 'ha')}
 									</>
 								) : (
 									<>Due: {dueDate}</>
@@ -82,17 +83,19 @@ export const Task = observer(({ task, isColor, isMinimal }: Props) => {
 					</div>
 				</div>
 				<div className='flex items-center -space-x-3'>
-					{/* {task.users.map(user => (
-						<div key={user.id}>
-							<Image
-								src={user.avatarPath}
-								alt={user.name}
-								width={40}
-								height={40}
-								className='rounded-full'
-							/>
-						</div>
-					))} */}
+					{task.task_participants
+						.filter(u => Boolean(u.profile))
+						.map(({ profile }) => (
+							<div key={profile.id}>
+								<Image
+									src={profile.avatar_path || ''}
+									alt={profile.name || ''}
+									width={40}
+									height={40}
+									className='rounded-full'
+								/>
+							</div>
+						))}
 				</div>
 			</div>
 			{!isMinimal && (
@@ -138,4 +141,4 @@ export const Task = observer(({ task, isColor, isMinimal }: Props) => {
 			)}
 		</div>
 	)
-})
+}
